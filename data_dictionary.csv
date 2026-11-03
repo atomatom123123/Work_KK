@@ -1,0 +1,12 @@
+Table,Field Name,Data Type,Non-Null Count,Sample Value
+events,timestamp,int64,2755641,1433221332117
+events,visitorid,int64,2755641,257597
+events,event,category,2755641,view
+events,itemid,int64,2755641,355908
+events,transactionid,float64,22457,4000.0
+events,datetime,datetime64[us],2755641,2015-06-02 05:02:12.117000
+item_properties,timestamp,int64,20275902,1435460400000
+item_properties,itemid,int64,20275902,460429
+item_properties,property,str,20275902,categoryid
+item_properties,value,str,20275902,1338
+item_properties,datetime,datetime64[us],20275902,2015-06-28 03:00:00

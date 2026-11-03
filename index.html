@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปข้อมูลพฤติกรรมการซื้อออนไลน์</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div>
+                <h1>สรุปข้อมูลพฤติกรรมการซื้อออนไลน์</h1>
+                <p class="subtitle">
+                    ระบบวิเคราะห์พฤติกรรมลูกค้าและเส้นทางการแปลงสภาพ
+                    <span class="data-badge">ข้อมูล: พ.ค. - ก.ย. 2015</span>
+                    <span class="data-badge"> อัปเดตล่าสุด: 2026-11-02</span>
+                </p>
+            </div>
+            <div class="header-actions">
+                <button id="openDictBtn" class="btn-secondary">Data Dictionary</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="switchTab('overview')"> ภาพรวม (Overview)</button>
+            <button class="tab-btn" onclick="switchTab('traffic')"> สถิติผู้เข้าชมรายชั่วโมง</button>
+            <button class="tab-btn" onclick="switchTab('funnel')"> สถิติแต่ละกระบวนการ</button>
+            <button class="tab-btn" onclick="switchTab('table')"> ตารางข้อมูล (Table)</button>
+        </div>
+
+        <!-- Filter Control & Export Bar -->
+        <section class="card filter-bar">
+            <div class="filter-group">
+                <label for="timeFilter"> ช่วงเวลา:</label>
+                <select id="timeFilter" class="form-select">
+                    <option value="all">ทั้งวัน (00:00 - 23:00 น.)</option>
+                    <option value="peak">ช่วงเวลาขายดี / Peak (19:00 - 22:00 น.)</option>
+                    <option value="offpeak">ช่วงเช้าและดึก (00:00 - 08:00 น.)</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button id="resetFilterBtn" class="btn-secondary"> รีเซ็ตตัวกรอง</button>
+                <button id="exportCsvBtn" class="btn-primary"> ส่งออก CSV</button>
+                <button id="printPdfBtn" class="btn-secondary"> พิมพ์ / PDF</button>
+            </div>
+        </section>
+
+        <!-- Tab 1: ภาพรวม (Overview) -->
+        <div id="tab-overview" class="tab-content active">
+            <!-- KPI Summary Cards -->
+            <section class="kpi-grid">
+                <div class="card kpi-card">
+                    <h3>ผู้เข้าชมสินค้า</h3>
+                    <p id="kpiVisitors" class="kpi-value">-</p>
+                </div>
+                <div class="card kpi-card">
+                    <h3>จำนวนการใช้งานทั้งหมด</h3>
+                    <p id="kpiEvents" class="kpi-value">-</p>
+                </div>
+                <div class="card kpi-card">
+                    <h3>ยอดการสั่งซื้อสำเร็จ</h3>
+                    <p id="kpiTransactions" class="kpi-value">-</p>
+                </div>
+                <div class="card kpi-card">
+                    <h3>อัตราปิดการขายสำเร็จ</h3>
+                    <p id="kpiConversion" class="kpi-value highlight">-</p>
+                </div>
+            </section>
+
+            <!-- Key Business Insights & Data Limitations -->
+            <div class="dashboard-grid">
+                <div class="card insight-card">
+                    <h2> Key Business Insights</h2>
+                    <ul id="insightsList" class="insight-list">
+                        <li>กำลังโหลดข้อมูล...</li>
+                    </ul>
+                </div>
+
+                <!-- การ์ดข้อจำกัดของข้อมูล (ปรับรูปแบบใหม่ 2 กล่องย่อยขอบส้มทอง) -->
+                <div class="card limitation-card">
+                    <h2 class="limitation-title"> ข้อจำกัดของข้อมูลชุดนี้</h2>
+                
+                    <div class="limitation-box-wrapper">
+                        <!-- กล่องย่อยที่ 1 -->
+                        <div class="limitation-box">
+                            <div class="limitation-box-header">
+                                <span class="box-icon"></span>
+                                <span class="box-title">กรอบเวลาของข้อมูล:</span>
+                            </div>
+                            <p class="box-text">ครอบคลุมเฉพาะข้อมูลช่วง พ.ค. - ก.ย. 2015 เท่านั้น</p>
+                        </div>
+
+                        <!-- กล่องย่อยที่ 2 -->
+                        <div class="limitation-box">
+                            <div class="limitation-box-header">
+                                <span class="box-icon"></span>
+                                <span class="box-title">ช่วงเวลาไม่ได้รวมในรายงาน:</span>
+                            </div>
+                            <p class="box-text">ยังไม่ครอบคลุมช่วงเทศกาลช้อปปิ้งใหญ่ปลายปี (เช่น 11.11, 12.12)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Traffic Activity Chart -->
+        <div id="tab-traffic" class="tab-content">
+            <div class="card">
+                <h2> สถิติผู้เข้าชมรายชั่วโมง</h2>
+                <div class="chart-container">
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+                <div class="micro-copy">
+                    <p> <strong>What:</strong> ทราฟฟิกหน้าร้านพุ่งสูงที่สุดช่วง 20:00 - 22:00 น. (พีคสุด 192,000 events เวลา 21:00 น.)</p>
+                    <p> <strong>So What:</strong> ผู้ใช้มี Intent และความพร้อมในการซื้อสูงสุดช่วงค่ำหลังเวลาทำงาน</p>
+                    <p> <strong>Now What:</strong> จัดกิจกรรม Flash Sale หรือส่ง Push Notification คูปองนาทีทองเวลา 19:30 น.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Conversion Funnel Chart -->
+        <div id="tab-funnel" class="tab-content">
+            <div class="card">
+                <h2> สถิติแต่ละกระบวนการ</h2>
+                <div class="chart-container">
+                    <canvas id="funnelChart"></canvas>
+                </div>
+                <div class="micro-copy">
+                    <p> <strong>What:</strong> เกิด Drop-off สูงสุดในขั้นตอน View → Add to Cart โดยดรอปออกถึง 97.7% (จาก 2.39M เหลือ 54.5K)</p>
+                    <p> <strong>So What:</strong> หน้าแสดงรายละเอียดสินค้า (Product Detail Page) อาจขาดข้อมูลการตัดสินใจ หรือปุ่มซื้อไม่ชัดเจน</p>
+                    <p> <strong>Now What:</strong> ปรับปรุง UX/UI หน้าสินค้า เพิ่มรีวิว ยอดขายสะสม และปุ่ม "ซื้อทันที (Buy Now)"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: ตารางข้อมูล (Table) -->
+        <div id="tab-table" class="tab-content">
+            <section class="card detail-section">
+                <h2> รายละเอียดสถิติรายชั่วโมง</h2>
+                <p class="subtitle" style="margin-bottom: 16px;">ตารางแสดงยอดกิจกรรมแยกตามชั่วโมงเพื่อวิเคราะห์สถิติอย่างแม่นยำ</p>
+                <div class="table-wrapper">
+                    <table id="detailTable">
+                        <thead>
+                            <tr>
+                                <th>ชั่วโมง (Hour)</th>
+                                <th>จำนวนกิจกรรม (Events)</th>
+                                <th>สัดส่วน (%)</th>
+                                <th>สถานะทราฟฟิก (Traffic Level)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailTableBody">
+                            <tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Data Dictionary Modal -->
+    <div id="dictModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeDictBtn" class="close-btn">&times;</span>
+            <h2> Data Dictionary</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>timestamp</td><td>Integer / Datetime</td><td>เวลาที่เกิดกิจกรรม (Unix Timestamp / Datetime)</td></tr>
+                        <tr><td>visitorid</td><td>Integer</td><td>รหัสผู้เข้าชมเว็บไซต์ (Unique User ID)</td></tr>
+                        <tr><td>event</td><td>String</td><td>ประเภทกิจกรรม (view, addtocart, transaction)</td></tr>
+                        <tr><td>itemid</td><td>Integer</td><td>รหัสสินค้าที่ผู้ใช้มีปฏิสัมพันธ์ด้วย</td></tr>
+                        <tr><td>transactionid</td><td>Integer</td><td>รหัสการสั่งซื้อ (มีค่าเฉพาะคำสั่งซื้อที่สำเร็จ)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="back-to-top hidden" title="กลับขึ้นด้านบน"></button>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
